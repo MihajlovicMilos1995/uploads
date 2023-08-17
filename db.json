@@ -1,0 +1,191 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "user": "admin",
+      "pwd": 123,
+      "roles": "admin"
+    },
+    {
+      "id": 2,
+      "user": "school1",
+      "pwd": 123,
+      "roles": "user"
+    }
+  ],
+  "classes": [
+    {
+      "name": "FS1A",
+      "year": 1,
+      "id": 1
+    },
+    {
+      "name": "FS1B",
+      "year": 1,
+      "id": 2
+    },
+    {
+      "name": "FS2A",
+      "year": 2,
+      "id": 3
+    },
+    {
+      "name": "FS2B",
+      "year": 2,
+      "id": 4
+    },
+    {
+      "name": "YR 13-2",
+      "year": 13,
+      "id": 5
+    },
+    {
+      "name": "YR 07-2",
+      "year": 7,
+      "id": 6
+    },
+    {
+      "name": "Y06H",
+      "year": 6,
+      "id": 8
+    },
+    {
+      "name": "G6-A",
+      "year": 6,
+      "id": 9
+    },
+    {
+      "name": "G10-F",
+      "year": 10,
+      "id": 10
+    }
+  ],
+  "teachers": [
+    {
+      "firstName": "John",
+      "lastName": "Wick",
+      "ident": "tcr24-20233",
+      "title": "Mr.",
+      "gender": "Male",
+      "authority": "Head of year 10A",
+      "username": "johntcr24wick@upstrive.com",
+      "sosButton": "Yes?",
+      "counselorButton": "Yes?"
+    }
+  ],
+  "students": [
+    {
+      "id": 1,
+      "userId": 1,
+      "firstName": "Bob",
+      "lastName": "Rock",
+      "ident": "Br2g2a-20038",
+      "gender": "Male",
+      "email": "Br2g2a-20038@icschool-uae.com",
+      "year": 2,
+      "class": "B"
+    },
+    {
+      "userId": 1,
+      "id": 2,
+      "firstName": "Alice",
+      "lastName": "Johnson",
+      "ident": "Aj3k9b-10249",
+      "gender": "Female",
+      "email": "Aj3k9b-10249@icschool-uae.com",
+      "year": 3,
+      "class": "A"
+    },
+    {
+      "userId": 1,
+      "id": 3,
+      "firstName": "Charlie",
+      "lastName": "Brown",
+      "ident": "Cb6h5x-30187",
+      "gender": "Male",
+      "email": "Cb6h5x-30187@icschool-uae.com",
+      "year": 1,
+      "class": "C"
+    },
+    {
+      "id": 4,
+      "firstName": "Ella",
+      "lastName": "Garcia",
+      "ident": "Eg1f8w-50934",
+      "gender": "Female",
+      "email": "Eg1f8w-50934@icschool-uae.com",
+      "year": 4,
+      "class": "D"
+    },
+    {
+      "id": 5,
+      "firstName": "James",
+      "lastName": "Smith",
+      "ident": "Js7t4m-40825",
+      "gender": "Male",
+      "email": "Js7t4m-40825@icschool-uae.com",
+      "year": 2,
+      "class": "A"
+    },
+    {
+      "firstName": "Pera",
+      "lastName": "Peric",
+      "ident": "Br2g2a-20038",
+      "gender": "Male",
+      "class": "YR 13-2",
+      "year": 13,
+      "email": "Br2g2a-20038@icschool-uae.com",
+      "id": 6
+    },
+    {
+      "firstName": "Aca",
+      "lastName": "Acic",
+      "ident": "Acaasd-2382",
+      "gender": "Female",
+      "class": "YR 07-2",
+      "year": 7,
+      "email": "aca@Aca.com",
+      "id": 7
+    },
+    {
+      "firstName": "John",
+      "lastName": "Wick",
+      "ident": "john1231-234",
+      "gender": "Male",
+      "class": "FS1A",
+      "year": 1,
+      "email": "john@john.com",
+      "id": 8
+    },
+    {
+      "firstName": "Ajzak",
+      "lastName": "Baraba",
+      "ident": "Ajzak45231-236",
+      "gender": "Male",
+      "class": "Y06H",
+      "year": 6,
+      "email": "Ajazk@Ajzak.com",
+      "id": 9
+    },
+    {
+      "firstName": "Chat",
+      "lastName": "GPT",
+      "ident": "chat12341-2342",
+      "gender": "Female",
+      "class": "G6-A",
+      "year": 6,
+      "email": "chat@chat.com",
+      "id": 10
+    },
+    {
+      "firstName": "Sluga",
+      "lastName": "Sotone",
+      "ident": "sluga666-666",
+      "gender": "Female",
+      "class": "G10-F",
+      "year": 10,
+      "email": "666@666.com",
+      "id": 11
+    }
+  ]
+}

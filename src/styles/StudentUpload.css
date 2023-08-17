@@ -1,0 +1,35 @@
+.wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  overflow-x: hidden;
+  padding: 10px;
+}
+
+.custom-form {
+  width: 500px;
+}
+
+.btn {
+  margin: 10px;
+  width: 100px;
+  height: 50px;
+  font-size: 13px;
+}
+
+.viewer {
+  width: 100%;
+  background-color: #e4e4e4;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+}
+.table-responsive {
+  width: 100%;
+}
+th,
+td {
+  padding: 2px;
+}

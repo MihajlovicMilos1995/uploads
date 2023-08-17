@@ -1,24 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
+
+import Login from "./auth/Login";
+import Register from "./auth/Register";
+import Students from "./components/Students";
+import Teachers from "./components/Teachers";
+import Layout from "./components/Layout";
+import Classes from "./components/Classes";
+import RequireAuth from "./components/RequireAuth";
+import LinkPage from "./components/LinkPage";
+import Unauthorized from "./components/Unauthorized ";
 
 function App() {
+  const [currUser, setCurrUser] = useState({});
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {/*Public access*/}
+        <Route path="/" element={<LinkPage />} />
+        <Route path="unauthorized" element={<Unauthorized />} />
+        <Route path="login" element={<Login setCurrUser={setCurrUser}/>}></Route>
+
+        {/*User and admin access*/}
+        <Route element={<RequireAuth allowedRoles={["admin", "user"]} />}>
+          <Route path="students" element={<Students />}></Route>
+          <Route path="teachers" element={<Teachers />}></Route>
+          <Route path="classes" element={<Classes />}></Route>
+        </Route>
+
+        {/*Admin access*/}
+        <Route element={<RequireAuth allowedRoles={["admin"]} />}>
+          <Route path="register" element={<Register />}></Route>
+        </Route>
+      </Route>
+    </Routes>
   );
 }
 
