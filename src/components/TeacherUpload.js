@@ -68,7 +68,6 @@ const TeacherUpload = () => {
     }
   };
 
-  // submit event
   const handleFileSubmit = (e) => {
     let header = [
       "First Name",
@@ -152,17 +151,22 @@ const TeacherUpload = () => {
 
   const validateAuthority = (authority) => {
     const lowerCaseAuthority = authority.toLowerCase();
-    console.log(lowerCaseAuthority);
 
     if (lowerCaseAuthority === "all") {
       return true;
     }
+
     const authorityParts = lowerCaseAuthority.split(" ");
     const authorityName = authorityParts[0];
 
-    const matchingRole = roles.find(
-      (role) => role.name.toLowerCase() === authorityName
-    );
+    const matchingRole = roles.find((role) => {
+      const prefixes = role.prefix
+        .toLowerCase()
+        .split(",")
+        .map((prefix) => prefix.trim());
+      return prefixes.includes(authorityName);
+    });
+
     if (
       matchingRole &&
       matchingRole.right_text.toLowerCase() === "all rights"
@@ -176,7 +180,6 @@ const TeacherUpload = () => {
     splitAuthorities.forEach((value) => {
       const trimmedValue = value.trim().toLowerCase();
 
-      // Check if the value is a number or matches an authority name
       const isValidNumber = !isNaN(trimmedValue);
       const isValidName = authorityOptions.some(
         (option) =>
@@ -191,7 +194,6 @@ const TeacherUpload = () => {
       return true;
     }
 
-    // Handle dynamic regex matching
     const dynamicRegexPatterns = roles.map((role) => {
       return `^${role.name.toLowerCase()} (.+)`;
     });
