@@ -60,6 +60,45 @@
       "id": 10
     }
   ],
+  "roles": [
+    {
+      "right": "class",
+      "name": "Teacher",
+      "right_text": "Manage class/es",
+      "role": 1,
+      "prefix": "Teacher"
+    },
+    {
+      "right": "year",
+      "name": "Head of Year",
+      "right_text": "Manage year/s",
+      "role": 2,
+      "prefix": "Head of Year, HOY"
+    },
+    {
+      "right": "year",
+      "name": "Head of Key Stage",
+      "right_text": "Manage year/s",
+      "role": 3,
+      "index": 2,
+      "prefix": "Head of key stage, HOKS"
+    },
+    {
+      "right": "all_rights",
+      "name": "Counselor",
+      "right_text": "All rights",
+      "role": 4,
+      "index": 3,
+      "prefix": "counsellor, counselor, c"
+    },
+    {
+      "right": "all_rights",
+      "name": "Admin",
+      "right_text": "All rights",
+      "role": 5,
+      "prefix": "admin, principal, ceo"
+    }
+  ],
   "teachers": [
     {
       "firstName": "John",

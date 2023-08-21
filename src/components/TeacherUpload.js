@@ -10,6 +10,7 @@ const TeacherUpload = () => {
 
   const [excelData, setExcelData] = useState(null);
   const [authorityOptions, setAuthorityOptions] = useState([]);
+  const [roles, setRoles] = useState([]);
 
   const [invalidData, setInvalidData] = useState([]);
   const fileInputRef = useRef(null);
@@ -30,7 +31,17 @@ const TeacherUpload = () => {
       }
     }
 
+    async function fetchRoles() {
+      try {
+        const response = await axios.get("http://localhost:3000/roles");
+        setRoles(response.data);
+      } catch (error) {
+        console.error("Error fetching roles:", error);
+      }
+    }
+
     fetchAuthorityOptions();
+    fetchRoles();
   }, []);
 
   const handleFile = (e) => {
@@ -141,58 +152,82 @@ const TeacherUpload = () => {
 
   const validateAuthority = (authority) => {
     const lowerCaseAuthority = authority.toLowerCase();
+    console.log(lowerCaseAuthority);
 
     if (lowerCaseAuthority === "all") {
       return true;
     }
-    
-    const authorityArray = authority.split(",").map((part) => part.trim());
+    const authorityParts = lowerCaseAuthority.split(" ");
+    const authorityName = authorityParts[0];
 
-    const checkArray = [];
-
-    authorityArray.forEach((value) => {
-      const isValid = authorityOptions.some(
-        (option) => value === option.name || Number(value) === option.year
-      );
-      checkArray.push(isValid);
-    });
-
-    if (checkArray.every((value) => value)) {
+    const matchingRole = roles.find(
+      (role) => role.name.toLowerCase() === authorityName
+    );
+    if (
+      matchingRole &&
+      matchingRole.right_text.toLowerCase() === "all rights"
+    ) {
       return true;
     }
 
-    const regexPattern = /^Head of year (.+)$/i;
+    const splitAuthorities = authority.split(",");
+    const checkedAuthorities = [];
 
-    const match = authority.match(regexPattern);
+    splitAuthorities.forEach((value) => {
+      const trimmedValue = value.trim().toLowerCase();
 
-    if (match && match[1]) {
-      const authoritySubstring = match[1];
+      // Check if the value is a number or matches an authority name
+      const isValidNumber = !isNaN(trimmedValue);
+      const isValidName = authorityOptions.some(
+        (option) =>
+          trimmedValue === option.name.toLowerCase() ||
+          (isValidNumber && Number(trimmedValue) === option.year)
+      );
 
-      const lowerCaseAuthority = authoritySubstring.toLowerCase();
-      for (const option of authorityOptions) {
-        const lowerCaseName = option.name.toLowerCase();
-        const lowerCaseYear = option.year.toString();
+      checkedAuthorities.push(isValidName);
+    });
 
-        if (
-          lowerCaseAuthority === lowerCaseName ||
-          lowerCaseAuthority === lowerCaseYear
-        ) {
-          return true;
+    if (checkedAuthorities.every((value) => value)) {
+      return true;
+    }
+
+    // Handle dynamic regex matching
+    const dynamicRegexPatterns = roles.map((role) => {
+      return `^${role.name.toLowerCase()} (.+)`;
+    });
+
+    let dynamicMatched = false;
+
+    dynamicRegexPatterns.forEach((regexPattern) => {
+      const regex = new RegExp(regexPattern, "i");
+
+      const match = lowerCaseAuthority.match(regex);
+
+      if (match && match[1]) {
+        const authoritySubstring = match[1];
+        const authSubstingArray = authoritySubstring.split(",");
+        const substringCheck = [];
+
+        authSubstingArray.forEach((value) => {
+          const trimmedValue = value.trim().toLowerCase();
+          const isValidNumber = !isNaN(trimmedValue);
+          const isValidName = authorityOptions.some(
+            (option) =>
+              trimmedValue === option.name.toLowerCase() ||
+              (isValidNumber && Number(trimmedValue) === option.year)
+          );
+          substringCheck.push(isValidName);
+        });
+
+        if (substringCheck.every((value) => value)) {
+          dynamicMatched = true;
+          return;
         }
       }
-    } else {
-      for (const option of authorityOptions) {
-        const lowerCaseName = option.name.toLowerCase();
-        const lowerCaseYear = option.year.toString();
+    });
 
-        if (
-          lowerCaseAuthority === lowerCaseName ||
-          lowerCaseAuthority === lowerCaseYear
-        ) {
-          return true;
-        }
-      }
-      return false;
+    if (dynamicMatched) {
+      return true;
     }
 
     return false;
@@ -265,7 +300,11 @@ const TeacherUpload = () => {
       <form className="form-group custom-form" onSubmit={handleFileSubmit}>
         {excelData && (
           <div style={{ display: "block" }}>
-            <button className="btn" onClick={handleTeacherUpload} disabled={invalidData}>
+            <button
+              className="btn"
+              onClick={handleTeacherUpload}
+              disabled={invalidData}
+            >
               Save the Teachers
             </button>
             <button className="btn" onClick={handleReset}>
