@@ -3,6 +3,7 @@ import * as XLSX from "xlsx";
 import "../styles/StudentUpload.css";
 import axios from "../api/axios";
 import { message } from "antd";
+import AuthorityDropdown from "./AuthorityDropdown";
 
 const TeacherUpload = () => {
   const [excelFile, setExcelFile] = useState(null);
@@ -14,6 +15,7 @@ const TeacherUpload = () => {
 
   const [invalidData, setInvalidData] = useState([]);
   const fileInputRef = useRef(null);
+  let prevData = invalidData;
 
   useEffect(() => {
     if (excelFile !== null) {
@@ -194,38 +196,42 @@ const TeacherUpload = () => {
       return true;
     }
 
-    const dynamicRegexPatterns = roles.map((role) => {
-      return `^${role.name.toLowerCase()} (.+)`;
-    });
-
     let dynamicMatched = false;
 
-    dynamicRegexPatterns.forEach((regexPattern) => {
-      const regex = new RegExp(regexPattern, "i");
+    roles.forEach((role) => {
+      const prefixes = role.prefix
+        .toLowerCase()
+        .split(",")
+        .map((prefix) => prefix.trim());
 
-      const match = lowerCaseAuthority.match(regex);
+      prefixes.forEach((prefix) => {
+        const regexPattern = `^${prefix} (.+)`;
+        const regex = new RegExp(regexPattern, "i");
 
-      if (match && match[1]) {
-        const authoritySubstring = match[1];
-        const authSubstingArray = authoritySubstring.split(",");
-        const substringCheck = [];
+        const match = lowerCaseAuthority.match(regex);
 
-        authSubstingArray.forEach((value) => {
-          const trimmedValue = value.trim().toLowerCase();
-          const isValidNumber = !isNaN(trimmedValue);
-          const isValidName = authorityOptions.some(
-            (option) =>
-              trimmedValue === option.name.toLowerCase() ||
-              (isValidNumber && Number(trimmedValue) === option.year)
-          );
-          substringCheck.push(isValidName);
-        });
+        if (match && match[1]) {
+          const authoritySubstring = match[1];
+          const authSubstingArray = authoritySubstring.split(",");
+          const substringCheck = [];
 
-        if (substringCheck.every((value) => value)) {
-          dynamicMatched = true;
-          return;
+          authSubstingArray.forEach((value) => {
+            const trimmedValue = value.trim().toLowerCase();
+            const isValidNumber = !isNaN(trimmedValue);
+            const isValidName = authorityOptions.some(
+              (option) =>
+                trimmedValue === option.name.toLowerCase() ||
+                (isValidNumber && Number(trimmedValue) === option.year)
+            );
+            substringCheck.push(isValidName);
+          });
+
+          if (substringCheck.every((value) => value)) {
+            dynamicMatched = true;
+            return;
+          }
         }
-      }
+      });
     });
 
     if (dynamicMatched) {
@@ -295,6 +301,17 @@ const TeacherUpload = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  };
+
+  const handleUpdateAuthority = (index, updatedAuthority) => {
+    const updatedInvalidData = [...invalidData];
+    
+    let prev = prevData[index];
+    console.log("prev", prev);
+
+    updatedInvalidData[index].Authority = updatedAuthority.join(", ");
+
+    //validateAndStoreInvalidData(updatedInvalidData);
   };
 
   return (
@@ -372,9 +389,21 @@ const TeacherUpload = () => {
               <tbody>
                 {invalidData.map((item, index) => (
                   <tr key={index}>
-                    {Object.keys(item).map(
-                      (key) => key !== "error" && <td key={key}>{item[key]}</td>
-                    )}
+                    {Object.keys(item).map((key) => (
+                      <td key={key}>
+                        {key === "Authority" ? (
+                          <AuthorityDropdown
+                            roles={roles}
+                            selectedAuthority={item[key]}
+                            onUpdate={(updatedAuthority) =>
+                              handleUpdateAuthority(index, updatedAuthority)
+                            }
+                          />
+                        ) : (
+                          item[key]
+                        )}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
