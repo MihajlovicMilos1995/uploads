@@ -10,12 +10,13 @@ const TeacherUpload = () => {
   const [typeError, setTypeError] = useState(null);
 
   const [excelData, setExcelData] = useState(null);
+  const [editedExcelData, setEditedExcelData] = useState(null);
   const [authorityOptions, setAuthorityOptions] = useState([]);
   const [roles, setRoles] = useState([]);
 
   const [invalidData, setInvalidData] = useState([]);
   const fileInputRef = useRef(null);
-  let prevData = invalidData;
+  const updatedExcelData = excelData;
 
   useEffect(() => {
     if (excelFile !== null) {
@@ -305,13 +306,31 @@ const TeacherUpload = () => {
 
   const handleUpdateAuthority = (index, updatedAuthority) => {
     const updatedInvalidData = [...invalidData];
-    
-    let prev = prevData[index];
-    console.log("prev", prev);
-
     updatedInvalidData[index].Authority = updatedAuthority.join(", ");
 
-    //validateAndStoreInvalidData(updatedInvalidData);
+    const matchingIndex = excelData.findIndex(
+      (item) =>
+        item["First Name"] === updatedInvalidData[index]["First Name"] &&
+        item["Last Name"] === updatedInvalidData[index]["Last Name"]
+    );
+
+    if (matchingIndex !== -1) {
+      const updatedExcel = [...editedExcelData];
+      updatedExcel[matchingIndex] = updatedInvalidData[index];
+      setEditedExcelData(updatedExcel); 
+    }
+  };
+
+  const handleAddToExcel = (e) => {
+    e.preventDefault();
+
+    const filteredExcelData = editedExcelData.map((item) => {
+      const { Error, ...rest } = item;
+      return rest;
+    });
+
+    setExcelData(filteredExcelData);
+    setInvalidData([]);
   };
 
   return (
@@ -319,13 +338,15 @@ const TeacherUpload = () => {
       <form className="form-group custom-form" onSubmit={handleFileSubmit}>
         {excelData && (
           <div style={{ display: "block" }}>
-            <button
-              className="btn"
-              onClick={handleTeacherUpload}
-              disabled={invalidData}
-            >
-              Save the Teachers
-            </button>
+            {invalidData.length !== 0 ? (
+              <button className="btn" onClick={handleAddToExcel}>
+                Validate data
+              </button>
+            ) : (
+              <button className="btn" onClick={handleTeacherUpload}>
+                Save the Teachers
+              </button>
+            )}
             <button className="btn" onClick={handleReset}>
               Reset
             </button>

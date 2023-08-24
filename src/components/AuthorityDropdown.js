@@ -6,13 +6,9 @@ const { Option } = Select;
 
 const AuthorityDropdown = ({ selectedAuthority, onUpdate, roles }) => {
   const [authorityOptions, setAuthorityOptions] = useState([]);
+  const [matchedRole, setMatchedRole] = useState(null);
   let matchingRole;
-  let matchedRole;
-  let auth;
 
-  useEffect(() => {
-    auth = selectedAuthority;
-  }, []);
   useEffect(() => {
     async function fetchAuthorityOptions() {
       try {
@@ -26,34 +22,43 @@ const AuthorityDropdown = ({ selectedAuthority, onUpdate, roles }) => {
   }, []);
 
   const handleAuthorityChange = (newAuthority) => {
-    let newAuthorityWithPrefix = newAuthority;
-    if (matchingRole) {
-      const prefix = auth.match(/^[^\d]+/)[0].trim();
-      console.log("prefix", prefix);
-      newAuthorityWithPrefix = newAuthority.map(
-        (authority) => `${prefix} ${authority}`
-      );
+    let newAuthorityWithPrefix = [];
+    let prefix = selectedAuthority.replace(/[\d,]+/g, "").trim();
+
+    if (matchedRole) {
+      newAuthorityWithPrefix.push(`${prefix} ${newAuthority.join(", ")}`);
+    } else {
+      newAuthorityWithPrefix.push(`${prefix} ${newAuthority}`);
     }
+
     onUpdate(newAuthorityWithPrefix);
   };
 
-  roles.forEach((role) => {
-    const prefixes = role.prefix
-      .toLowerCase()
-      .split(",")
-      .map((prefix) => prefix.trim());
+  useEffect(() => {
+    const calculateMatchedRole = () => {
+      let matchedRole = null;
+      roles.forEach((role) => {
+        const prefixes = role.prefix
+          .toLowerCase()
+          .split(",")
+          .map((prefix) => prefix.trim());
 
-    prefixes.forEach((prefix) => {
-      const regexPattern = `^${prefix} (.+)`;
-      const regex = new RegExp(regexPattern, "i");
+        prefixes.forEach((prefix) => {
+          const regexPattern = `^${prefix} (.+)`;
+          const regex = new RegExp(regexPattern, "i");
 
-      matchingRole = selectedAuthority.toLowerCase().match(regex);
+          matchingRole = selectedAuthority.toLowerCase().match(regex);
 
-      if (matchingRole) {
-        matchedRole = role;
-      }
-    });
-  });
+          if (matchingRole) {
+            matchedRole = role;
+          }
+        });
+      });
+      return matchedRole;
+    };
+
+    setMatchedRole(calculateMatchedRole());
+  }, []);
 
   return (
     <Select
@@ -66,12 +71,12 @@ const AuthorityDropdown = ({ selectedAuthority, onUpdate, roles }) => {
       {authorityOptions.map((authority) => (
         <>
           {matchedRole && matchedRole.right === "year" && (
-            <Option key={authority.year} value={authority.year}>
+            <Option key={authority.id} value={authority.year}>
               {authority.year}
             </Option>
           )}
           {(!matchedRole || matchedRole.right !== "year") && (
-            <Option key={authority.name} value={authority.name}>
+            <Option key={authority.id} value={authority.name}>
               {authority.name}
             </Option>
           )}
