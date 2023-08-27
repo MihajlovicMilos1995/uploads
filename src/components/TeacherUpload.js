@@ -10,13 +10,13 @@ const TeacherUpload = () => {
   const [typeError, setTypeError] = useState(null);
 
   const [excelData, setExcelData] = useState(null);
-  const [editedExcelData, setEditedExcelData] = useState(null);
+  const [editedExcelData, setEditedExcelData] = useState([]);
   const [authorityOptions, setAuthorityOptions] = useState([]);
   const [roles, setRoles] = useState([]);
 
   const [invalidData, setInvalidData] = useState([]);
   const fileInputRef = useRef(null);
-  const updatedExcelData = excelData;
+  const [tempExcelData, setTempExcelData] = useState();
 
   useEffect(() => {
     if (excelFile !== null) {
@@ -46,6 +46,15 @@ const TeacherUpload = () => {
     fetchAuthorityOptions();
     fetchRoles();
   }, []);
+
+  useEffect(() => {
+    if (excelData) {
+      setTempExcelData(excelData);
+    }
+  }, [excelData]);
+
+  useEffect(() => {
+  }, [tempExcelData]);
 
   const handleFile = (e) => {
     let fileTypes = [
@@ -299,6 +308,7 @@ const TeacherUpload = () => {
     setExcelFile(null);
     setExcelData(null);
     setInvalidData([]);
+    setTempExcelData(excelData);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -314,16 +324,19 @@ const TeacherUpload = () => {
         item["Last Name"] === updatedInvalidData[index]["Last Name"]
     );
 
+    let updatedExcel;
     if (matchingIndex !== -1) {
-      const updatedExcel = [...editedExcelData];
-      updatedExcel[matchingIndex] = updatedInvalidData[index];
-      setEditedExcelData(updatedExcel); 
+
+      updatedExcel = tempExcelData.map((item, i) =>
+        i === matchingIndex ? updatedInvalidData[index] : item
+      );
+      setEditedExcelData(updatedExcel);
     }
+    setTempExcelData(updatedExcel);
   };
 
   const handleAddToExcel = (e) => {
     e.preventDefault();
-
     const filteredExcelData = editedExcelData.map((item) => {
       const { Error, ...rest } = item;
       return rest;
